@@ -1,2 +1,3 @@
-# GithubChecks
-A comand line tool for sending/retrieving github run checks
+# Create Report
+
+A Github action for creating generic run report

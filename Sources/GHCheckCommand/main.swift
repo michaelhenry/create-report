@@ -14,7 +14,7 @@ enum GHCheckCommandError: Error {
 struct GHCheckCommand: ParsableCommand {
 
     @Option(help: "The title of the report")
-    var reportName: String
+    var reportTitle: String
 
     @Option(help: "The summary of the report. (Markdown is supported)")
     var reportSummary: String
@@ -45,12 +45,12 @@ struct GHCheckCommand: ParsableCommand {
                 ghToken: githubToken)
             let request = try ghChecks.createCheckRunRequest(
                 payload: .init(
-                    name: reportName,
+                    name: reportTitle,
                     headSha: headSha,
                     conclusion: .success,
                     status: .completed,
                     output: .init(
-                        title: reportName,
+                        title: reportTitle,
                         summary: reportSummary)
                 ))
             session.dataTask(with: request) { data, _, error in

@@ -25,6 +25,9 @@ jobs:
         path: |
           ~/.build
         key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}
+        
+    - run: swift test
+      shell: bash
 
     - uses:  michaelhenry/create-report@v1.0.0
       with:

@@ -28,8 +28,7 @@ jobs:
 
     - uses:  michaelhenry/create-report@v1.0.0
       with:
-        repo: create-report
-        owner: michaelhenry
+        repository: "michaelhenry/create-report"
         github-token: ${{ secrets.GITHUB_TOKEN }}
         report-name: "Sample report on ${{ matrix.os }} with Swift ${{ matrix.swft }}"
         report-summary: "# HELLO WORLD \n > This a sample code blockquote \n\n | Left columns  | Right columns |\n| ------------- |:-------------:|\n| left foo      | right foo     |\n| left bar      | right bar     |\n| left baz      | right baz     |"

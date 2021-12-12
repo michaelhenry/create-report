@@ -2,7 +2,7 @@
 
 A Github action for creating generic run report (using Markdown!)
 
-```xml
+```yml
 - uses:  michaelhenry/create-report@1.0.0
     with:
     repository: ${username}/${repo-name}

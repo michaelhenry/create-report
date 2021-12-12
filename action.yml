@@ -1,0 +1,34 @@
+name: 'create-report'
+description: 'An action to create a generic run report'
+
+branding:
+  icon: 'file-text'
+  color: 'green'
+
+# TODO: Specify version
+inputs:
+  repository:
+    description: "Eg. apple/swift"
+    required: true
+  report-name:
+    description: "Name of the report"
+    required: true
+  report-summary:
+    description: "Summary of the report."
+    required: true
+  github-token:
+    description: "Github token"
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Create report
+      run: |
+        swift run ghchecks create-report \
+        --report-name "${{ inputs.report-name }} " \
+        --report-summary "${{ inputs.report-summary }}" \
+        --repository "${{ inputs.repository }}" \
+        --head-sha "${{ github.event.pull_request.head.sha }}" \
+        --github-token "${{ inputs.github-token }}"
+      shell: bash

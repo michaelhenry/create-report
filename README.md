@@ -1,2 +1,12 @@
-# GithubChecks
-A comand line tool for sending/retrieving github run checks
+# Create Report
+
+A Github action for creating generic run report (using Markdown!)
+
+```xml
+- uses:  michaelhenry/create-report@1.0.0
+    with:
+    repository: ${username}/${repo-name}
+    github-token: ${{ secrets.GITHUB_TOKEN }}
+    report-name: "Sample report"
+    report-summary: "# HELLO WORLD \n > Your markdown text"
+```

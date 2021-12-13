@@ -28,5 +28,5 @@ jobs:
 
     - uses:  michaelhenry/create-report@v1.0.0
       with:
-        report-title: "Sample report on ${{ matrix.os }} with Swift ${{ matrix.swft }}"
+        report-title: "Sample report on ${{ matrix.os }} with Swift ${{ matrix.swift }}"
         report-summary: "# HELLO WORLD \n > This a sample code blockquote \n\n | Left columns  | Right columns |\n| ------------- |:-------------:|\n| left foo      | right foo     |\n| left bar      | right bar     |\n| left baz      | right baz     |"

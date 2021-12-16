@@ -1,6 +1,6 @@
 import Foundation
 
-public struct CheckRunOutput: Codable {
+public struct CheckRunOutput: Codable, Equatable {
     public let title: String
     public let summary: String
 

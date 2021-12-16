@@ -11,8 +11,12 @@ inputs:
     description: "Title of the report"
     required: true
   report-summary:
-    description: "Summary of the report."
-    required: true
+    description: "Summary file."
+    required: false
+  report-summary-data-type:
+    description: "The data type of the summary either string or a file."
+    required: false
+    default: "string"
 
 runs:
   using: "composite"
@@ -22,6 +26,7 @@ runs:
         swift run ghchecks create-report \
         --report-title "${{ inputs.report-title }} " \
         --report-summary "${{ inputs.report-summary }}" \
+        --report-summary-data-type "${{ inputs.report-summary-data-type }}" \
         --repository "${{ github.repository }}" \
         --head-sha "${{ github.event.pull_request.head.sha }}" \
         --github-token "${{ github.token }}"

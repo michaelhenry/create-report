@@ -1,6 +1,6 @@
 import Foundation
 
-public struct CheckRunRequestPayload: Encodable {
+public struct CheckRunRequestPayload: Codable, Equatable {
     public let name: String?
     public let headSha: String?
 

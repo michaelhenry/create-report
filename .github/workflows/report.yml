@@ -11,7 +11,8 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest]
-        swift: ["5.5"]
+        swift: ["5.5.1"]
+        data-type: ["file", "string"]
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v2
@@ -26,7 +27,8 @@ jobs:
           ~/.build
         key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}
 
-    - uses:  michaelhenry/create-report@v1.0.0
+    - uses:  michaelhenry/create-report@feature/report-summary-file-support
       with:
-        report-title: "Sample report on ${{ matrix.os }} with Swift ${{ matrix.swift }}"
-        report-summary: "# HELLO WORLD \n > This a sample code blockquote \n\n | Left columns  | Right columns |\n| ------------- |:-------------:|\n| left foo      | right foo     |\n| left bar      | right bar     |\n| left baz      | right baz     |"
+        report-title: "Sample report on ${{ matrix.os }}, Swift ${{ matrix.swift }} with a ${{ matrix.data-type }}"
+        report-summary: "sample.md"
+        report-summary-data-type:  ${{ matrix.data-type }}

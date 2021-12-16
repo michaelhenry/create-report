@@ -3,47 +3,54 @@ import Foundation
 import FoundationNetworking
 #endif
 
-public struct GithubChecks {
+public struct GithubChecks: GithubChecksUseCase {
 
     enum GithubChecksError: Error {
         case invalidRequest
     }
 
+    private let modelLoader: ModelLoading
     private let ghToken: String
     private let repository: String
 
-    public init(repository: String, ghToken: String) {
+    // MARK: - Initializer
+
+    public init(repository: String, ghToken: String, modelLoader: ModelLoading) {
         self.repository = repository
         self.ghToken = ghToken
+        self.modelLoader = modelLoader
     }
 
-    public func createCheckRunRequest(payload: CheckRunRequestPayload) throws
-    -> URLRequest {
-        return try checkRunRequest(
+    // MARK: - Internal Methods
+    func createCheckRunRequest(payload: CheckRunRequestPayload)
+    -> URLRequest? {
+        return checkRunRequest(
             httpMethod: "POST",
             path: "/repos/\(repository)/check-runs",
             payload: payload)
     }
 
-    public func updateCheckRunRequest(checkRunId: Int, payload: CheckRunRequestPayload) throws
-    -> URLRequest {
-        return try checkRunRequest(
+    func updateCheckRunRequest(checkRunId: Int, payload: CheckRunRequestPayload)
+    -> URLRequest? {
+        return checkRunRequest(
             httpMethod: "PATCH",
             path: "/repos/\(repository)/check-runs/\(checkRunId)",
             payload: payload)
     }
 
-    private func checkRunRequest<Payload>(httpMethod: String, path: String, payload: Payload? = nil) throws
-    -> URLRequest where Payload: Encodable {
+    // MARK: - Private methods
+
+    private func checkRunRequest<Payload>(httpMethod: String, path: String, payload: Payload? = nil)
+    -> URLRequest? where Payload: Encodable {
 
         var httpBody: Data? = nil
         if let payload = payload {
             let encoder = JSONEncoder()
             encoder.keyEncodingStrategy = .convertToSnakeCase
-            httpBody = try encoder.encode(payload)
+            httpBody = try? encoder.encode(payload)
         }
 
-        guard let request = URLRequest.build(
+        return URLRequest.build(
             host: Configs.host,
             httpMethod: httpMethod,
             path: path,
@@ -52,9 +59,23 @@ public struct GithubChecks {
                 "Accept": Configs.accept,
                 "Authorization": "Bearer \(ghToken)",
             ])
-        else {
-            throw GithubChecksError.invalidRequest
+    }
+
+    // MARK: - Public Methods
+
+    public func createCheckRun(payload: CheckRunRequestPayload, completion: @escaping ((Result<CheckRunResponse, Error>) -> Void)) {
+        guard let request = createCheckRunRequest(payload: payload) else {
+            completion(.failure(GithubChecksError.invalidRequest))
+            return
         }
-        return request
+        modelLoader.load(request: request, completion: completion)
+    }
+
+    public func updateCheckRun(checkRunId: Int, payload: CheckRunRequestPayload, completion: @escaping ((Result<CheckRunResponse, Error>) -> Void)) {
+        guard let request = updateCheckRunRequest(checkRunId: checkRunId, payload: payload) else {
+            completion(.failure(GithubChecksError.invalidRequest))
+            return
+        }
+        modelLoader.load(request: request, completion: completion)
     }
 }

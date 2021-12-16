@@ -3,6 +3,9 @@ import Foundation
 #if canImport(FoundationNetworking)
 import FoundationNetworking
 #endif
+#if canImport(_Concurrency)
+import _Concurrency
+#endif
 import GithubChecks
 
 enum GHCheckCommandError: Error {
@@ -11,12 +14,20 @@ enum GHCheckCommandError: Error {
     case other(Error)
 }
 
+enum SummaryDataType: String, Codable {
+    case file
+    case string
+}
+
 struct GHCheckCommand: ParsableCommand {
 
     @Option(help: "The title of the report")
     var reportTitle: String
 
-    @Option(help: "The summary of the report. (Markdown is supported)")
+    @Option(help: "The data type of the summary, either 'string' or 'file'. The default value is 'string'")
+    var reportSummaryDataType: String = SummaryDataType.string.rawValue
+
+    @Option(help: "The summary of the report")
     var reportSummary: String
 
     @Option(help: "Eg. apple/swift")
@@ -28,42 +39,50 @@ struct GHCheckCommand: ParsableCommand {
     @Option(help: "Your github token. eg. ${{ secrets.GITHUB_TOKEN }}")
     var githubToken: String
 
-    @Argument(help: "Command eg. create-report | update-report")
+    @Argument(help: "Command eg. create-report")
     var command: String
 
-    mutating func run() throws {
-        try execute(command: command)
-    }
-
-    private func execute(command: String) throws {
-        let session = URLSession(configuration: .default)
+    func run() throws {
         switch command {
         case "create-report":
-
-            let ghChecks = GithubChecks(
-                repository: repository,
-                ghToken: githubToken)
-            let request = try ghChecks.createCheckRunRequest(
-                payload: .init(
-                    name: reportTitle,
-                    headSha: headSha,
-                    conclusion: .success,
-                    status: .completed,
-                    output: .init(
-                        title: reportTitle,
-                        summary: reportSummary)
-                ))
-            session.dataTask(with: request) { data, _, error in
-                if let error = error {
-                    GHCheckCommand.exit(withError: error)
-                }
-                print(String(data: data ?? Data(), encoding: .utf8) ?? "")
-                GHCheckCommand.exit(withError: nil)
-            }
-            .resume()
-            dispatchMain()
+            try createReport()
         default:
-            throw GHCheckCommandError.unsupportedCommand
+            GHCheckCommand.exit(withError: GHCheckCommandError.unsupportedCommand)
+        }
+        dispatchMain()
+    }
+
+    private func createReport() throws {
+        let session = URLSession(configuration: .default)
+
+        var summary = reportSummary
+        if reportSummaryDataType == SummaryDataType.file.rawValue {
+            summary = try String(contentsOfFile: reportSummary)
+        }
+
+        let payload = CheckRunRequestPayload(
+            name: reportTitle,
+            headSha: headSha,
+            conclusion: .success,
+            status: .completed,
+            output: .init(
+                title: reportTitle,
+                summary: summary)
+        )
+
+        let ghChecks = GithubChecks(
+            repository: repository,
+            ghToken: githubToken,
+            modelLoader: session)
+
+        ghChecks.createCheckRun(payload: payload) { result in
+            switch result {
+            case .success(let model):
+                print("CHECK URL:", model.url)
+                GHCheckCommand.exit(withError: nil)
+            case .failure(let error):
+                GHCheckCommand.exit(withError: error)
+            }
         }
     }
 }

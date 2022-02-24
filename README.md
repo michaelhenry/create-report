@@ -9,8 +9,7 @@ A Github action for creating generic run report (using Markdown!)
     report-summary: "# HELLO WORLD \n > Your markdown text"
 ```
 
-or with a markdown file
-
+or with a markdown file - ([sample.md](sample.md))
 ```yml
 - uses:  michaelhenry/create-report@v1.1.0
   with:
@@ -20,7 +19,7 @@ or with a markdown file
     report-summary-data-format: "markdown"
 ```
 
-or with an html file
+or with an html file - ([sample.html](sample.html))
 
 ```yml
 - uses:  michaelhenry/create-report@v1.1.0

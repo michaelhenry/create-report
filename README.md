@@ -33,4 +33,5 @@ or with an html file
 
 <img width="1076" alt="Screen Shot 2021-12-13 at 4 06 32" src="https://user-images.githubusercontent.com/717992/145722614-bc2987a6-72b3-4f26-9948-6bcf40658854.png">
 
-[Sample workflow with a markdownfile](https://github.com/michaelhenry/create-report/actions/runs/1893728587true)
+
+[Sample workflow with a markdownfile](https://github.com/michaelhenry/create-report/runs/4549800696?check_suite_focus=true) generated from [.github/workflows/report.yml](https://github.com/michaelhenry/create-report/blob/main/.github/workflows/report.yml)

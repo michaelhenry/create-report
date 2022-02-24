@@ -1,5 +1,5 @@
 INSTALL_DIR=/usr/local/bin
-SWIFT_BUILD_FLAGS = -c release --disable-sandbox --arch arm64 --arch x86_64
+SWIFT_BUILD_FLAGS = -c release --disable-sandbox
 EXECUTABLE_NAME=ghchecks
 EXECUTABLE_PATH = $(shell swift build $(SWIFT_BUILD_FLAGS) --show-bin-path)/$(EXECUTABLE_NAME)
 

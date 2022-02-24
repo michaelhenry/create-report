@@ -19,6 +19,11 @@ enum SummaryDataType: String, Codable {
     case string
 }
 
+enum SummaryDataFormat: String, Codable {
+    case markdown
+    case html
+}
+
 struct GHCheckCommand: ParsableCommand {
 
     @Option(help: "The title of the report")
@@ -26,6 +31,9 @@ struct GHCheckCommand: ParsableCommand {
 
     @Option(help: "The data type of the summary, either 'string' or 'file'. The default value is 'string'")
     var reportSummaryDataType: String = SummaryDataType.string.rawValue
+
+    @Option(help: "The data format of the summary, either 'markdown' or 'html'. The default value is 'markdown'")
+    var reportSummaryDataFormat: String = SummaryDataFormat.markdown.rawValue
 
     @Option(help: "The summary of the report")
     var reportSummary: String
@@ -54,10 +62,15 @@ struct GHCheckCommand: ParsableCommand {
 
     private func createReport() throws {
         let session = URLSession(configuration: .default)
-
         var summary = reportSummary
         if reportSummaryDataType == SummaryDataType.file.rawValue {
-            summary = try String(contentsOfFile: reportSummary)
+            switch reportSummaryDataFormat.lowercased() {
+                case "html":
+                    summary = shell(command: "cat \(reportSummary) | python md.py")
+                default:
+                    summary = try String(contentsOfFile: reportSummary)
+            }
+
         }
 
         let payload = CheckRunRequestPayload(

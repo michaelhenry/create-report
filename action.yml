@@ -17,16 +17,42 @@ inputs:
     description: "The data type of the summary either string or a file."
     required: false
     default: "string"
+  report-summary-data-format:
+    description: "The data format of the summary either markdown or html."
+    required: false
+    default: "markdown"
 
 runs:
   using: "composite"
   steps:
+
+    - name: Cache ghchecks
+      id: ghchecks-cache
+      uses: actions/cache@v2
+      with:
+        path: /usr/local/bin/ghchecks
+        key: ${{ runner.os }}-ghchecks-lib-cache
+
+    - name: Install GHChecks
+      if: steps.ghchecks-cache.outputs.cache-hit != 'true'
+      run: make install
+      shell: bash
+
+    - uses: actions/setup-python@v2
+      with:
+        python-version: '3.8.12'
+        cache: 'pip'
+
+    - run: pip install -r requirements.txt
+      shell: bash
+
     - name: Create report
       run: |
-        swift run ghchecks create-report \
+        ghchecks create-report \
         --report-title "${{ inputs.report-title }} " \
         --report-summary "${{ inputs.report-summary }}" \
         --report-summary-data-type "${{ inputs.report-summary-data-type }}" \
+        --report-summary-data-format "${{ inputs.report-summary-data-format }}" \
         --repository "${{ github.repository }}" \
         --head-sha "${{ github.event.pull_request.head.sha }}" \
         --github-token "${{ github.token }}"

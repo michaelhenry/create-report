@@ -44,7 +44,7 @@ jobs:
     - uses:  michaelhenry/create-report@v1.1.0
       with:
         report-title: "HTML report with a string on ${{ matrix.os }} swift-${{ matrix.swift }} "
-        report-summary: "<h1>H1</h1> <h2>H2</h2> <h3>H3</h3> <h4>H4</h4> <h5>H5</h5>"
+        report-summary: "<h1>H1</h1> <h2>H2</h2> <h3>H3</h3> <h4>H4</h4> <a href='https://google.com'>Google</a>"
         report-summary-data-type:  string
         report-summary-data-format: html
 

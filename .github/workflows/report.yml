@@ -27,28 +27,28 @@ jobs:
           ~/.build
         key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}
 
-    - uses:  michaelhenry/create-report@v1.1.0
+    - uses: ./
       with:
         report-title: "Markdown report with a string on ${{ matrix.os }} swift-${{ matrix.swift }} "
         report-summary: "# H1\n## H2\n### H3\n#### H4\n##### H5"
         report-summary-data-type:  string
         report-summary-data-format: markdown
 
-    - uses:  michaelhenry/create-report@v1.1.0
+    - uses:  ./
       with:
         report-title: "Markdown report with a file on ${{ matrix.os }} swift-${{ matrix.swift }} "
         report-summary: sample.md
         report-summary-data-type:  file
         report-summary-data-format: markdown
 
-    - uses:  michaelhenry/create-report@v1.1.0
+    - uses:  ./
       with:
         report-title: "HTML report with a string on ${{ matrix.os }} swift-${{ matrix.swift }} "
         report-summary: "<h1>H1</h1> <h2>H2</h2> <h3>H3</h3> <h4>H4</h4> <a href='https://google.com'>Google</a>"
         report-summary-data-type:  string
         report-summary-data-format: html
 
-    - uses:  michaelhenry/create-report@v1.1.0
+    - uses: ./
       with:
         report-title: "HTML report with a file on ${{ matrix.os }} swift-${{ matrix.swift }} "
         report-summary: sample.html

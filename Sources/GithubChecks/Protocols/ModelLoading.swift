@@ -4,5 +4,5 @@ import FoundationNetworking
 #endif
 
 public protocol ModelLoading {
-    func load<Model>(request: URLRequest, completion: @escaping((Result<Model, Error>) -> Void)) where Model : Decodable
+    func load<Model>(request: URLRequest) async throws -> Model where Model : Decodable
 }

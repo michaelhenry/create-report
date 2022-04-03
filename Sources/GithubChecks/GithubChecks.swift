@@ -63,19 +63,17 @@ public struct GithubChecks: GithubChecksUseCase {
 
     // MARK: - Public Methods
 
-    public func createCheckRun(payload: CheckRunRequestPayload, completion: @escaping ((Result<CheckRunResponse, Error>) -> Void)) {
+    public func createCheckRun(payload: CheckRunRequestPayload) async throws -> CheckRunResponse {
         guard let request = createCheckRunRequest(payload: payload) else {
-            completion(.failure(GithubChecksError.invalidRequest))
-            return
+            throw GithubChecksError.invalidRequest
         }
-        modelLoader.load(request: request, completion: completion)
+        return try await modelLoader.load(request: request)
     }
 
-    public func updateCheckRun(checkRunId: Int, payload: CheckRunRequestPayload, completion: @escaping ((Result<CheckRunResponse, Error>) -> Void)) {
+    public func updateCheckRun(checkRunId: Int, payload: CheckRunRequestPayload) async throws -> CheckRunResponse {
         guard let request = updateCheckRunRequest(checkRunId: checkRunId, payload: payload) else {
-            completion(.failure(GithubChecksError.invalidRequest))
-            return
+            throw GithubChecksError.invalidRequest
         }
-        modelLoader.load(request: request, completion: completion)
+        return try await modelLoader.load(request: request)
     }
 }

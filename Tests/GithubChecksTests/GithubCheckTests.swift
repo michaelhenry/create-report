@@ -8,8 +8,9 @@ import XCTest
 @testable import GithubChecks
 
 class MockModelLoader: ModelLoading {
-    func load<Model>(request: URLRequest, completion: @escaping ((Result<Model, Error>) -> Void)) where Model : Decodable {
-
+    func load<Model>(request: URLRequest) async throws -> Model where Model : Decodable {
+        // TODO: Mock response from Github Checks API
+        fatalError("unimplemented.")
     }
 }
 

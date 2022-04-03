@@ -7,17 +7,13 @@ branding:
 
 # TODO: Specify version
 inputs:
-  report-title:
+  title:
     description: "Title of the report"
     required: true
-  report-summary:
-    description: "Summary file."
+  path:
+    description: "File path of the report."
     required: false
-  report-summary-data-type:
-    description: "The data type of the summary either string or a file."
-    required: false
-    default: "string"
-  report-summary-data-format:
+  format:
     description: "The data format of the summary either markdown or html."
     required: false
     default: "markdown"
@@ -32,6 +28,11 @@ runs:
       with:
         path: /usr/local/bin/ghchecks
         key: ${{ runner.os }}-ghchecks-lib-cache
+
+    - if: steps.ghchecks-cache.outputs.cache-hit != 'true'
+      uses: fwal/setup-swift@v1.10.0
+      with:
+        swift-version: "5.6"
 
     - name: Install GHChecks
       if: steps.ghchecks-cache.outputs.cache-hit != 'true'
@@ -49,10 +50,9 @@ runs:
     - name: Create report
       run: |
         ghchecks create-report \
-        --report-title "${{ inputs.report-title }} " \
-        --report-summary "${{ inputs.report-summary }}" \
-        --report-summary-data-type "${{ inputs.report-summary-data-type }}" \
-        --report-summary-data-format "${{ inputs.report-summary-data-format }}" \
+        --report "${{ inputs.title }} " \
+        --path "${{ inputs.path }}" \
+        --format "${{ inputs.format }}" \
         --repository "${{ github.repository }}" \
         --head-sha "${{ github.event.pull_request.head.sha }}" \
         --github-token "${{ github.token }}"

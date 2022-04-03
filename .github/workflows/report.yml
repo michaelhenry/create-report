@@ -11,15 +11,9 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest]
-        # os: [macos-latest]
-        swift: ["5.5.1"]
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v2
-
-    - uses: fwal/setup-swift@v1.10.0
-      with:
-        swift-version: ${{ matrix.swift }}
 
     - uses: actions/cache@v2
       with:
@@ -27,30 +21,20 @@ jobs:
           ~/.build
         key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}
 
-    - uses:  michaelhenry/create-report@v1.1.0
+    - uses:  ./
       with:
-        report-title: "Markdown report with a string on ${{ matrix.os }} swift-${{ matrix.swift }} "
-        report-summary: "# H1\n## H2\n### H3\n#### H4\n##### H5"
-        report-summary-data-type:  string
-        report-summary-data-format: markdown
+        title: "Markdown report using ${{ matrix.os }}"
+        path: sample.md
+        format: markdown
 
-    - uses:  michaelhenry/create-report@v1.1.0
+    - uses:  ./
       with:
-        report-title: "Markdown report with a file on ${{ matrix.os }} swift-${{ matrix.swift }} "
-        report-summary: sample.md
-        report-summary-data-type:  file
-        report-summary-data-format: markdown
+        title: "HTML report using ${{ matrix.os }} with swift-${{ matrix.swift }}"
+        path: sample.html
+        format: html
 
-    - uses:  michaelhenry/create-report@v1.1.0
+    - uses:  ./
       with:
-        report-title: "HTML report with a string on ${{ matrix.os }} swift-${{ matrix.swift }} "
-        report-summary: "<h1>H1</h1> <h2>H2</h2> <h3>H3</h3> <h4>H4</h4> <h5>H5</h5>"
-        report-summary-data-type:  string
-        report-summary-data-format: html
-
-    - uses:  michaelhenry/create-report@v1.1.0
-      with:
-        report-title: "HTML report with a file on ${{ matrix.os }} swift-${{ matrix.swift }} "
-        report-summary: sample.html
-        report-summary-data-type:  file
-        report-summary-data-format: html
+        title: "JUnit report using ${{ matrix.os }}"
+        path: sample.junit
+        format: junit

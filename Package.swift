@@ -19,14 +19,19 @@ let package = Package(
     ],
     targets: [
         .target(name: "GithubChecks"),
+        .target(name: "Reports"),
         .executableTarget(
             name: "GHCheckCommand",
             dependencies: [
                 "GithubChecks",
+                "Reports",
                 .product(name: "ArgumentParser", package: "swift-argument-parser"),
             ]),
         .testTarget(
             name: "GithubChecksTests",
             dependencies: ["GithubChecks"]),
+        .testTarget(
+            name: "SummaryRendererTests",
+            dependencies: ["GHCheckCommand"]),
     ]
 )

@@ -7,6 +7,7 @@ import FoundationNetworking
 import _Concurrency
 #endif
 import GithubChecks
+import Reports
 
 enum GHCheckCommandError: Error {
     case unsupportedCommand
@@ -14,29 +15,30 @@ enum GHCheckCommandError: Error {
     case other(Error)
 }
 
-enum SummaryDataType: String, Codable {
-    case file
-    case string
-}
-
-enum SummaryDataFormat: String, Codable {
+enum SummaryDataFormat: String, Codable, CaseIterable {
     case markdown
     case html
+
+    var summaryRenderer: SummaryRenderer.Type {
+        switch self {
+        case .html:
+            return HTMLSummaryRenderer.self
+        case .markdown:
+            return MarkdownSummaryRenderer.self
+        }
+    }
 }
 
 struct GHCheckCommand: ParsableCommand {
 
     @Option(help: "The title of the report")
-    var reportTitle: String
+    var title: String
 
-    @Option(help: "The data type of the summary, either 'string' or 'file'. The default value is 'string'")
-    var reportSummaryDataType: String = SummaryDataType.string.rawValue
+    @Option(help: "The data format of the summary. Options are \(SummaryDataFormat.allCases). The default value is 'markdown'")
+    var format: String = SummaryDataFormat.markdown.rawValue
 
-    @Option(help: "The data format of the summary, either 'markdown' or 'html'. The default value is 'markdown'")
-    var reportSummaryDataFormat: String = SummaryDataFormat.markdown.rawValue
-
-    @Option(help: "The summary of the report")
-    var reportSummary: String
+    @Option(help: "The path of the summary report")
+    var path: String
 
     @Option(help: "Eg. apple/swift")
     var repository: String
@@ -61,37 +63,24 @@ struct GHCheckCommand: ParsableCommand {
     }
 
     private func createReport() throws {
-        let session = URLSession(configuration: .default)
-        var summary = reportSummary
-        if reportSummaryDataType == SummaryDataType.file.rawValue {
-            switch reportSummaryDataFormat.lowercased() {
-                case "html":
-                    summary = shell(command: "cat \(reportSummary) | python md.py")
-                default:
-                    summary = try String(contentsOfFile: reportSummary)
-            }
-
-        }
+        guard
+            let dataFormat = SummaryDataFormat(rawValue: format.lowercased())
+        else { fatalError("Invalid summary data format. Options are \(SummaryDataFormat.allCases)") }
 
         let payload = CheckRunRequestPayload(
-            name: reportTitle,
+            name: title,
             headSha: headSha,
             conclusion: .success,
             status: .completed,
             output: .init(
-                title: reportTitle,
-                summary: summary)
-        )
+                title: title,
+                summary: try dataFormat.summaryRenderer.init().render(path: path)))
 
-        let ghChecks = GithubChecks(
-            repository: repository,
-            ghToken: githubToken,
-            modelLoader: session)
-
+        let session = URLSession(configuration: .default)
+        let ghChecks = GithubChecks(repository: repository, ghToken: githubToken, modelLoader: session)
         ghChecks.createCheckRun(payload: payload) { result in
             switch result {
-            case .success(let model):
-                print("CHECK URL:", model.url)
+            case .success:
                 GHCheckCommand.exit(withError: nil)
             case .failure(let error):
                 GHCheckCommand.exit(withError: error)

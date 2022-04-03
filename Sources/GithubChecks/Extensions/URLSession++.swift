@@ -7,21 +7,15 @@ import _Concurrency
 #endif
 
 extension URLSession: ModelLoading {
-    public func load<Model>(request: URLRequest, completion: @escaping ((Result<Model, Error>) -> Void)) where Model : Decodable {
-        dataTask(with: request) { responseData, _, error in
-            do {
-                let decoder = JSONDecoder()
-                decoder.keyDecodingStrategy = .convertFromSnakeCase
-                let data = responseData ?? Data()
-                if let model = try? decoder.decode(Model.self, from: data) {
-                    completion(.success(model))
-                } else {
-                    let responseError = try decoder.decode(CheckRunResponseError.self, from: data)
-                    completion(.failure(CheckRunError.responseError(responseError)))
-                }
-            } catch {
-                completion(.failure(error))
-            }
-        }.resume()
+    public func load<Model>(request: URLRequest) async throws -> Model where Model : Decodable {
+        let (responseData, _) = try await data(for: request)
+        let decoder = JSONDecoder()
+        decoder.keyDecodingStrategy = .convertFromSnakeCase
+        if let model = try? decoder.decode(Model.self, from: responseData) {
+            return model
+        } else {
+            let responseError = try decoder.decode(CheckRunResponseError.self, from: responseData)
+            throw CheckRunError.responseError(responseError)
+        }
     }
 }

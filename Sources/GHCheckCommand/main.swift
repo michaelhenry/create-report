@@ -77,12 +77,13 @@ struct GHCheckCommand: ParsableCommand {
                 summary: try dataFormat.summaryRenderer.init().render(path: path)))
 
         let session = URLSession(configuration: .default)
+        
         let ghChecks = GithubChecks(repository: repository, ghToken: githubToken, modelLoader: session)
-        ghChecks.createCheckRun(payload: payload) { result in
-            switch result {
-            case .success:
-                GHCheckCommand.exit(withError: nil)
-            case .failure(let error):
+        
+        Task {
+            do {
+                _ = try await ghChecks.createCheckRun(payload: payload)
+            } catch {
                 GHCheckCommand.exit(withError: error)
             }
         }

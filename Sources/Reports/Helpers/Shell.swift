@@ -1,19 +1,19 @@
 import Foundation
 
 extension Process {
-    public func shell(command: String) -> String {
+    public func shell(command: String) throws -> String {
         launchPath = "/bin/bash"
         arguments = ["-c", command]
         let outputPipe = Pipe()
         standardOutput = outputPipe
-        launch()
+        try run()
         let data = outputPipe.fileHandleForReading.readDataToEndOfFile()
         return String(data: data, encoding: .utf8) ?? ""
     }
 }
 
-public func shell(command: String, arguments: String...) -> String {
+public func shell(command: String, arguments: String...) throws -> String {
     let process = Process()
     let command = "\(command) \(arguments.joined(separator: " "))"
-    return process.shell(command: command)
+    return try process.shell(command: command)
 }

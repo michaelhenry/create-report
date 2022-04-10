@@ -1,0 +1,5 @@
+ignore:
+    - "Tests"
+    - "DerivedData"
+    - "**/GHCheckCommand.swift"
+    - "**/URLSession++.swift"

@@ -1,40 +1,73 @@
 # create-report
 
-A Github action for creating generic run report (using Markdown!)
-
 [![codecov](https://codecov.io/gh/michaelhenry/create-report/branch/main/graph/badge.svg?token=TC3XYJYG61)](https://codecov.io/gh/michaelhenry/create-report)
 [![codebeat badge](https://codebeat.co/badges/f52c2068-17ca-41a1-8421-f6b54e4155d4)](https://codebeat.co/projects/github-com-michaelhenry-create-report-main) [![Test Coverage](https://api.codeclimate.com/v1/badges/20de4a63612d960d1bf1/test_coverage)](https://codeclimate.com/github/michaelhenry/create-report/test_coverage) [![Maintainability](https://api.codeclimate.com/v1/badges/20de4a63612d960d1bf1/maintainability)](https://codeclimate.com/github/michaelhenry/create-report/maintainability)
 
+A Github action for creating generic run report. Currently this action is supporting 3 data format: `markdown`, `html` or `junit`.
 
+Sample workflow:
 ```yml
-- uses:  michaelhenry/create-report@v1.1.0
-  with:
-    report-title: "Sample report"
-    report-summary: "# HELLO WORLD \n > Your markdown text"
+jobs:
+  create-report:
+    name: Report using ${{ matrix.os }}
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses:  ./
+      name: create report from a junit file.
+      with:
+        title: "JUnit report"
+        path: samples/sample.junit
+        format: junit
 ```
 
-or with a markdown file - ([sample.md](sample.md) becomes [GHAction report](https://github.com/michaelhenry/create-report/runs/5320754864?check_suite_focus=true))
-```yml
-- uses:  michaelhenry/create-report@v1.1.0
-  with:
-    report-title: "Sample report"
-    report-summary: "sample.md"
-    report-summary-data-type: "file"
-    report-summary-data-format: "markdown"
-```
-
-or with an html file - ([sample.html](sample.html) becomes [GHAction report](https://github.com/michaelhenry/create-report/runs/5320933581?check_suite_focus=true))
+## Using Markdown
 
 ```yml
-- uses:  michaelhenry/create-report@v1.1.0
-  with:
-    report-title: "Sample report"
-    report-summary: "sample.html"
-    report-summary-data-type: "file"
-    report-summary-data-format: "html"
+  - uses: michaelhenry/create-report@v2.0.0
+    name: create report from markdown
+    with:
+      title: "Markdown report"
+      path: samples/sample.md
+      format: markdown
 ```
 
-<img width="1076" alt="Screen Shot 2021-12-13 at 4 06 32" src="https://user-images.githubusercontent.com/717992/145722614-bc2987a6-72b3-4f26-9948-6bcf40658854.png">
+Please see [samples/sample.md](samples/sample.md) for the sample file which generated this run report.
 
+<img width="801" alt="Screen Shot 2022-04-10 at 23 28 09" src="https://user-images.githubusercontent.com/717992/162620495-998b0195-3f49-4e9c-892c-fc0a4be9af6b.png">
 
-[Sample workflow with a markdownfile](https://github.com/michaelhenry/create-report/runs/4549800696?check_suite_focus=true) generated from [.github/workflows/report.yml](https://github.com/michaelhenry/create-report/blob/main/.github/workflows/report.yml)
+---
+
+## Using HTML
+
+```yml
+  - uses: michaelhenry/create-report@v2.0.0
+    name: create report from html
+    with:
+      title: "HTML report"
+      path: samples/sample.html
+      format: html
+```
+
+Please see [samples/sample.html](samples/sample.html) for the sample file which generated this run report.
+
+<img width="945" alt="Screen Shot 2022-04-10 at 23 27 32" src="https://user-images.githubusercontent.com/717992/162620514-b76f11fb-4ba7-4d43-a202-043d360cffd7.png">
+
+---
+
+## Using JUnit
+
+```yml
+  - uses: michaelhenry/create-report@v2.0.0
+    name: create report from junit
+    with:
+      title: "JUnit report"
+      path: samples/sample.junit
+      format: junit
+```
+
+Please see [samples/sample.junit](samples/sample.junit) for the sample file which generated this run report.
+
+<img width="924" alt="Screen Shot 2022-04-10 at 23 26 19" src="https://user-images.githubusercontent.com/717992/162620429-f2b006a1-b4bd-486d-95fb-44d827b058bb.png">
+
+---

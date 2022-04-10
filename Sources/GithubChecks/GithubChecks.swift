@@ -51,14 +51,15 @@ public struct GithubChecks: GithubChecksUseCase {
         }
 
         return URLRequest.build(
-            host: Configs.host,
-            httpMethod: httpMethod,
-            path: path,
-            httpBody: httpBody,
-            headers: [
-                "Accept": Configs.accept,
-                "Authorization": "Bearer \(ghToken)",
-            ])
+            .init(
+                host: Configs.host,
+                httpMethod: httpMethod,
+                path: path,
+                httpBody: httpBody,
+                headers: [
+                    "Accept": Configs.accept,
+                    "Authorization": "Bearer \(ghToken)",
+                ]))
     }
 
     // MARK: - Public Methods

@@ -1,0 +1,99 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test-ubuntu:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.8.12'
+          cache: 'pip'
+      - run: pip install -r requirements.txt
+        shell: bash
+      - run: swift test --enable-code-coverage
+      - uses: michaelhenry/swifty-code-coverage@v1.0.0
+        with:
+          build-path: .build
+          target: GithubChecksPackageTests.xctest
+          is-spm: true
+          output: "coverage/lcov.info"
+          output-artifact-name: "codecov-artifact"
+      - name: Upload to Codecov
+        run: |
+          bash <(curl https://codecov.io/bash) -f "coverage/*.info"
+        shell: bash
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
+  test-macos:
+    runs-on: macos-12
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.8.12'
+          cache: 'pip'
+      - run: pip install -r requirements.txt
+        shell: bash
+      - run: swift test --enable-code-coverage
+      - uses: michaelhenry/swifty-code-coverage@v1.0.0
+        with:
+          build-path: .build
+          target: GithubChecksPackageTests.xctest
+          is-spm: true
+          output: "coverage/lcov.info"
+          output-artifact-name: "codeclimate-artifact"
+      - name: Upload to Code Climate
+        run: |
+          curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-darwin-amd64 > ./cc-test-reporter
+          chmod +x ./cc-test-reporter
+          ./cc-test-reporter before-build
+          ./cc-test-reporter after-build --coverage-input-type lcov
+        shell: bash
+        env:
+          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
+
+  create-report:
+    name: Report using ${{ matrix.os }}
+    needs: [test-ubuntu, test-macos]
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-12]
+    runs-on: ${{ matrix.os }}
+    steps:
+    - uses: actions/checkout@v2
+
+    - uses:  ./
+      name: create report from markdown
+      with:
+        title: "Markdown report using ${{ matrix.os }}"
+        path: samples/sample.md
+        format: markdown
+
+    - uses:  ./
+      name: create report from html
+      with:
+        title: "HTML report using ${{ matrix.os }}"
+        path: samples/sample.html
+        format: html
+
+    - uses:  ./
+      name: create report from junit
+      with:
+        title: "JUnit report using ${{ matrix.os }}"
+        path: samples/sample.junit
+        format: junit

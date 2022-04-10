@@ -21,23 +21,16 @@ inputs:
 runs:
   using: "composite"
   steps:
-
-    - name: Cache ghchecks
-      id: ghchecks-cache
+    - name: Cache Pip
+      id: pip-cache
       uses: actions/cache@v2
       with:
-        path: /usr/local/bin/ghchecks
-        key: ${{ runner.os }}-ghchecks-lib-cache
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-hashFiles("**/requirements.txt")-v1
 
-    - if: steps.ghchecks-cache.outputs.cache-hit != 'true'
-      uses: fwal/setup-swift@v1.10.0
+    - uses: fwal/setup-swift@v1.14.0
       with:
         swift-version: "5.6"
-
-    - name: Install GHChecks
-      if: steps.ghchecks-cache.outputs.cache-hit != 'true'
-      run: make install
-      shell: bash
 
     - uses: actions/setup-python@v2
       with:
@@ -45,12 +38,13 @@ runs:
         cache: 'pip'
 
     - run: pip install -r requirements.txt
+      if: steps.pip-cache.outputs.cache-hit != 'true'
       shell: bash
 
     - name: Create report
       run: |
-        ghchecks create-report \
-        --report "${{ inputs.title }} " \
+        swift run ghchecks create-report \
+        --title "${{ inputs.title }} " \
         --path "${{ inputs.path }}" \
         --format "${{ inputs.format }}" \
         --repository "${{ github.repository }}" \

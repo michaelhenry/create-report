@@ -1,6 +1,5 @@
 import Foundation
 
 public protocol SummaryRenderer {
-    init()
-    func render(path: String) throws -> String
+    func render() async throws -> String
 }

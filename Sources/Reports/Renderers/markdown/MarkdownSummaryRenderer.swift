@@ -2,9 +2,13 @@ import Foundation
 
 public struct MarkdownSummaryRenderer: SummaryRenderer {
     
-    public init() {}
+    private let path: String
     
-    public func render(path: String) throws -> String {
+    public init(path: String) {
+        self.path = path
+    }
+    
+    public func render() async throws -> String {
         return try String(contentsOfFile: path)
     }
 }

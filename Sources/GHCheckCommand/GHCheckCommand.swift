@@ -18,23 +18,27 @@ enum GHCheckCommandError: Error {
 enum SummaryDataFormat: String, Codable, CaseIterable {
     case markdown
     case html
+    case junit
 
-    var summaryRenderer: SummaryRenderer.Type {
+    func summaryRenderer(path: String) -> SummaryRenderer {
         switch self {
         case .html:
-            return HTMLSummaryRenderer.self
+            return HTMLSummaryRenderer(path: path)
         case .markdown:
-            return MarkdownSummaryRenderer.self
+            return MarkdownSummaryRenderer(path: path)
+        case .junit:
+            return JUnitSummaryRenderer(path: path)
         }
     }
 }
 
-struct GHCheckCommand: ParsableCommand {
+@main
+struct GHCheckCommand: AsyncParsableCommand {
 
     @Option(help: "The title of the report")
     var title: String
 
-    @Option(help: "The data format of the summary. Options are \(SummaryDataFormat.allCases). The default value is 'markdown'")
+    @Option(help: "The data format of the summary. Options are \(SummaryDataFormat.allCases.map { $0.rawValue }). The default value is 'markdown'")
     var format: String = SummaryDataFormat.markdown.rawValue
 
     @Option(help: "The path of the summary report")
@@ -52,42 +56,32 @@ struct GHCheckCommand: ParsableCommand {
     @Argument(help: "Command eg. create-report")
     var command: String
 
-    func run() throws {
+    func run() async throws {
         switch command {
         case "create-report":
-            try createReport()
+            try await createReport()
         default:
             GHCheckCommand.exit(withError: GHCheckCommandError.unsupportedCommand)
         }
         dispatchMain()
     }
 
-    private func createReport() throws {
+    private func createReport() async throws {
         guard
             let dataFormat = SummaryDataFormat(rawValue: format.lowercased())
-        else { fatalError("Invalid summary data format. Options are \(SummaryDataFormat.allCases)") }
+        else { fatalError("Invalid summary data format. Options are \(SummaryDataFormat.allCases.map { $0.rawValue })") }
 
+        let summary = try await dataFormat.summaryRenderer(path: path).render()
         let payload = CheckRunRequestPayload(
             name: title,
             headSha: headSha,
             conclusion: .success,
             status: .completed,
-            output: .init(
-                title: title,
-                summary: try dataFormat.summaryRenderer.init().render(path: path)))
-
+            output: .init(title: title, summary: summary))
         let session = URLSession(configuration: .default)
-        
         let ghChecks = GithubChecks(repository: repository, ghToken: githubToken, modelLoader: session)
-        
-        Task {
-            do {
-                _ = try await ghChecks.createCheckRun(payload: payload)
-            } catch {
-                GHCheckCommand.exit(withError: error)
-            }
-        }
+        let response = try await ghChecks.createCheckRun(payload: payload)
+        print("RESPONSE IS", response)
+        GHCheckCommand.exit(withError: nil)
     }
 }
-
-GHCheckCommand.main()

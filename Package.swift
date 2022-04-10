@@ -15,7 +15,7 @@ let package = Package(
             targets: ["GithubChecks"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/apple/swift-argument-parser", from: "1.0.2"),
+        .package(url: "https://github.com/apple/swift-argument-parser", from: "1.1.2"),
     ],
     targets: [
         .target(name: "GithubChecks"),

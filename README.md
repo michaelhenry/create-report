@@ -2,6 +2,8 @@
 
 A Github action for creating generic run report (using Markdown!)
 
+[![codecov](https://codecov.io/gh/michaelhenry/create-report/branch/main/graph/badge.svg?token=TC3XYJYG61)](https://codecov.io/gh/michaelhenry/create-report)
+
 ```yml
 - uses:  michaelhenry/create-report@v1.1.0
   with:

@@ -3,7 +3,7 @@
 A Github action for creating generic run report (using Markdown!)
 
 [![codecov](https://codecov.io/gh/michaelhenry/create-report/branch/main/graph/badge.svg?token=TC3XYJYG61)](https://codecov.io/gh/michaelhenry/create-report)
-[![codebeat badge](https://codebeat.co/badges/f52c2068-17ca-41a1-8421-f6b54e4155d4)](https://codebeat.co/projects/github-com-michaelhenry-create-report-main)
+[![codebeat badge](https://codebeat.co/badges/f52c2068-17ca-41a1-8421-f6b54e4155d4)](https://codebeat.co/projects/github-com-michaelhenry-create-report-main) [![Test Coverage](https://api.codeclimate.com/v1/badges/20de4a63612d960d1bf1/test_coverage)](https://codeclimate.com/github/michaelhenry/create-report/test_coverage) [![Maintainability](https://api.codeclimate.com/v1/badges/20de4a63612d960d1bf1/maintainability)](https://codeclimate.com/github/michaelhenry/create-report/maintainability)
 
 
 ```yml

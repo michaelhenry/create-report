@@ -3,6 +3,8 @@
 A Github action for creating generic run report (using Markdown!)
 
 [![codecov](https://codecov.io/gh/michaelhenry/create-report/branch/main/graph/badge.svg?token=TC3XYJYG61)](https://codecov.io/gh/michaelhenry/create-report)
+[![codebeat badge](https://codebeat.co/badges/f52c2068-17ca-41a1-8421-f6b54e4155d4)](https://codebeat.co/projects/github-com-michaelhenry-create-report-main)
+
 
 ```yml
 - uses:  michaelhenry/create-report@v1.1.0

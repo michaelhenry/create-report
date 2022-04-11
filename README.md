@@ -2,6 +2,9 @@
 
 A Github action for creating generic run report (using Markdown!)
 
+[![codebeat badge](https://codebeat.co/badges/f52c2068-17ca-41a1-8421-f6b54e4155d4)](https://codebeat.co/projects/github-com-michaelhenry-create-report-main)
+
+
 ```yml
 - uses:  michaelhenry/create-report@v1.1.0
   with:

@@ -6,15 +6,28 @@ on:
       - main
 
 jobs:
-  build:
+  code-coverage-report:
     runs-on: macos-latest
     steps:
-      - name: Test
-        uses: actions/checkout@v1
+      - uses: actions/checkout@v1
       - run: swift test --enable-code-coverage
-      - run: |
-          xcrun llvm-cov export -format="lcov" .build/debug/GithubChecksPackageTests.xctest/Contents/MacOS/GithubChecksPackageTests -instr-profile .build/debug/codecov/default.profdata > info.lcov
-          bash <(curl https://codecov.io/bash)
-
-    env:
-      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+      - uses: michaelhenry/swifty-code-coverage@v1.0.0
+        with:
+          build-path: .build
+          target: GithubChecksPackageTests.xctest
+          is-spm: true
+      - name: Upload to Codecov
+        run: |
+          bash <(curl https://codecov.io/bash) -f "coverage/*.info"
+        shell: bash
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+      - name: Upload to Code Climate
+        run: |
+          curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-darwin-amd64 > ./cc-test-reporter
+          chmod +x ./cc-test-reporter
+          ./cc-test-reporter before-build
+          ./cc-test-reporter after-build --coverage-input-type lcov
+        shell: bash
+        env:
+          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}

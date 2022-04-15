@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - uses:  ./
+    - uses: michaelhenry/create-report@v2.0.0
       name: create report from a junit file.
       with:
         title: "JUnit report"

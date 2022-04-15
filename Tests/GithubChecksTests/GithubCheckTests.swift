@@ -67,6 +67,9 @@ final class GithubChecksTests: XCTestCase {
         modelLoader.mockResponse(with: successResponse)
         let response = try await ghChecks.createCheckRun(payload: payload)
         XCTAssertEqual(response.id, 4)
+        XCTAssertEqual(response.headSha, "ce587453ced02b1526dfb4cb910479d431683101")
+        XCTAssertEqual(response.conclusion, .success)
+        XCTAssertEqual(response.status, .inProgress)
     }
 
     func testUpdateCheckRun() async throws {

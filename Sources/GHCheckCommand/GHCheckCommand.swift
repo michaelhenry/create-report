@@ -1,13 +1,13 @@
 import ArgumentParser
 import Foundation
+import GithubChecks
+import Reports
 #if canImport(FoundationNetworking)
 import FoundationNetworking
 #endif
 #if canImport(_Concurrency)
 import _Concurrency
 #endif
-import GithubChecks
-import Reports
 
 enum GHCheckCommandError: Error {
     case unsupportedCommand

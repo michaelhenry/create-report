@@ -10,7 +10,7 @@ on:
 
 jobs:
   code-coverage-report:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     steps:
       - uses: actions/checkout@v1
       - run: swift test --enable-code-coverage

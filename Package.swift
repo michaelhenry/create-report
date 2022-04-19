@@ -16,10 +16,13 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-argument-parser", from: "1.1.2"),
+        .package(url: "https://github.com/michaelhenry/SimpleXMLParser", from: "1.0.0"),
     ],
     targets: [
         .target(name: "GithubChecks"),
-        .target(name: "Reports"),
+        .target(name: "Reports", dependencies: [
+            .product(name: "SimpleXMLParser", package: "SimpleXMLParser")
+        ]),
         .executableTarget(
             name: "GHCheckCommand",
             dependencies: [

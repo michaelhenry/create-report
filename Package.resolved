@@ -2,6 +2,15 @@
   "object": {
     "pins": [
       {
+        "package": "SimpleXMLParser",
+        "repositoryURL": "https://github.com/michaelhenry/SimpleXMLParser",
+        "state": {
+          "branch": null,
+          "revision": "e1e2839ef0f8dd887b9b97c6c53e6f3570ca89c6",
+          "version": "1.0.0"
+        }
+      },
+      {
         "package": "swift-argument-parser",
         "repositoryURL": "https://github.com/apple/swift-argument-parser",
         "state": {

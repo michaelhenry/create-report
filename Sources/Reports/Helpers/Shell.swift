@@ -1,7 +1,7 @@
 import Foundation
 
-extension Process {
-    public func shell(command: String) throws -> String {
+public extension Process {
+    func shell(command: String) throws -> String {
         launchPath = "/bin/bash"
         arguments = ["-c", command]
         let outputPipe = Pipe()

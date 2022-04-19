@@ -12,7 +12,8 @@ let package = Package(
         ]),
         .library(
             name: "GithubChecks",
-            targets: ["GithubChecks"]),
+            targets: ["GithubChecks"]
+        ),
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-argument-parser", from: "1.1.2"),
@@ -21,7 +22,7 @@ let package = Package(
     targets: [
         .target(name: "GithubChecks"),
         .target(name: "Reports", dependencies: [
-            .product(name: "SimpleXMLParser", package: "SimpleXMLParser")
+            .product(name: "SimpleXMLParser", package: "SimpleXMLParser"),
         ]),
         .executableTarget(
             name: "GHCheckCommand",
@@ -29,12 +30,15 @@ let package = Package(
                 "GithubChecks",
                 "Reports",
                 .product(name: "ArgumentParser", package: "swift-argument-parser"),
-            ]),
+            ]
+        ),
         .testTarget(
             name: "GithubChecksTests",
-            dependencies: ["GithubChecks"]),
+            dependencies: ["GithubChecks"]
+        ),
         .testTarget(
             name: "SummaryRendererTests",
-            dependencies: ["GHCheckCommand"]),
+            dependencies: ["GHCheckCommand"]
+        ),
     ]
 )

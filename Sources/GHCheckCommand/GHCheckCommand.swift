@@ -1,10 +1,10 @@
 import ArgumentParser
 import Foundation
 #if canImport(FoundationNetworking)
-import FoundationNetworking
+    import FoundationNetworking
 #endif
 #if canImport(_Concurrency)
-import _Concurrency
+    import _Concurrency
 #endif
 import GithubChecks
 import Reports
@@ -34,7 +34,6 @@ enum SummaryDataFormat: String, Codable, CaseIterable {
 
 @main
 struct GHCheckCommand: AsyncParsableCommand {
-
     @Option(help: "The title of the report")
     var title: String
 
@@ -77,7 +76,8 @@ struct GHCheckCommand: AsyncParsableCommand {
             headSha: headSha,
             conclusion: .success,
             status: .completed,
-            output: .init(title: title, summary: summary))
+            output: .init(title: title, summary: summary)
+        )
         let session = URLSession(configuration: .default)
         let ghChecks = GithubChecks(repository: repository, ghToken: githubToken, modelLoader: session)
         let response = try await ghChecks.createCheckRun(payload: payload)

@@ -1,10 +1,9 @@
 import Foundation
 #if canImport(FoundationNetworking)
-import FoundationNetworking
+    import FoundationNetworking
 #endif
 
 public struct GithubChecks: GithubChecksUseCase {
-
     enum GithubChecksError: Error {
         case invalidRequest
     }
@@ -22,28 +21,33 @@ public struct GithubChecks: GithubChecksUseCase {
     }
 
     // MARK: - Internal Methods
+
     func createCheckRunRequest(payload: CheckRunRequestPayload)
-    -> URLRequest? {
+        -> URLRequest?
+    {
         return checkRunRequest(
             httpMethod: "POST",
             path: "/repos/\(repository)/check-runs",
-            payload: payload)
+            payload: payload
+        )
     }
 
     func updateCheckRunRequest(checkRunId: Int, payload: CheckRunRequestPayload)
-    -> URLRequest? {
+        -> URLRequest?
+    {
         return checkRunRequest(
             httpMethod: "PATCH",
             path: "/repos/\(repository)/check-runs/\(checkRunId)",
-            payload: payload)
+            payload: payload
+        )
     }
 
     // MARK: - Private methods
 
     private func checkRunRequest<Payload>(httpMethod: String, path: String, payload: Payload? = nil)
-    -> URLRequest? where Payload: Encodable {
-
-        var httpBody: Data? = nil
+        -> URLRequest? where Payload: Encodable
+    {
+        var httpBody: Data?
         if let payload = payload {
             let encoder = JSONEncoder()
             encoder.keyEncodingStrategy = .convertToSnakeCase
@@ -59,7 +63,8 @@ public struct GithubChecks: GithubChecksUseCase {
                 headers: [
                     "Accept": Configs.accept,
                     "Authorization": "Bearer \(ghToken)",
-                ]))
+                ]
+            ))
     }
 
     // MARK: - Public Methods

@@ -2,7 +2,6 @@ import Foundation
 import SimpleXMLParser
 
 public struct JUnitSummaryRenderer: SummaryRenderer {
-
     private let path: String
 
     public init(path: String) {
@@ -51,7 +50,8 @@ public struct JUnitSummaryRenderer: SummaryRenderer {
 
     private func render(testCase: Element) -> String {
         guard let name = testCase.attributes["name"],
-              let time = testCase.attributes["time"] else {
+              let time = testCase.attributes["time"]
+        else {
             return ""
         }
         let failureMessages = testCase.children

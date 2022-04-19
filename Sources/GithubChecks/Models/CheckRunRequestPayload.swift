@@ -13,12 +13,12 @@ public struct CheckRunRequestPayload: Codable, Equatable {
         headSha: String? = nil,
         conclusion: CheckRunConclusion? = nil,
         status: CheckRunStatus? = nil,
-        output: CheckRunOutput? = nil) {
-
-            self.name = name
-            self.headSha = headSha
-            self.conclusion = conclusion
-            self.status = status
-            self.output = output
-        }
+        output: CheckRunOutput? = nil
+    ) {
+        self.name = name
+        self.headSha = headSha
+        self.conclusion = conclusion
+        self.status = status
+        self.output = output
+    }
 }

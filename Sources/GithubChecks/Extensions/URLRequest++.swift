@@ -1,10 +1,9 @@
 import Foundation
 #if canImport(FoundationNetworking)
-import FoundationNetworking
+    import FoundationNetworking
 #endif
 
 extension URLRequest {
-
     struct RequestInput {
         var scheme: String = "https"
         var host: String = ""
@@ -14,7 +13,7 @@ extension URLRequest {
         var httpBody: Data? = nil
         var headers: [String: String]? = nil
     }
-    
+
     static func build(_ input: RequestInput) -> URLRequest? {
         var urlComponents = URLComponents()
         urlComponents.scheme = input.scheme

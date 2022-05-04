@@ -4,5 +4,5 @@ import Foundation
 #endif
 
 public protocol ModelLoading {
-    func load<Model>(request: URLRequest) async throws -> Model where Model: Decodable
+    func load<Model>(request: URLRequest, decoder: Decoder) async throws -> Model where Model: Decodable
 }

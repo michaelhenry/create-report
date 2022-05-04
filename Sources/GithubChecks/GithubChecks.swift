@@ -11,13 +11,15 @@ public struct GithubChecks: GithubChecksUseCase {
     private let modelLoader: ModelLoading
     private let ghToken: String
     private let repository: String
+    private let decoder: Decoder
 
     // MARK: - Initializer
 
-    public init(repository: String, ghToken: String, modelLoader: ModelLoading) {
+    public init(repository: String, ghToken: String, modelLoader: ModelLoading, decoder: Decoder) {
         self.repository = repository
         self.ghToken = ghToken
         self.modelLoader = modelLoader
+        self.decoder = decoder
     }
 
     // MARK: - Internal Methods
@@ -73,13 +75,13 @@ public struct GithubChecks: GithubChecksUseCase {
         guard let request = createCheckRunRequest(payload: payload) else {
             throw GithubChecksError.invalidRequest
         }
-        return try await modelLoader.load(request: request)
+        return try await modelLoader.load(request: request, decoder: decoder)
     }
 
     public func updateCheckRun(checkRunId: Int, payload: CheckRunRequestPayload) async throws -> CheckRunResponse {
         guard let request = updateCheckRunRequest(checkRunId: checkRunId, payload: payload) else {
             throw GithubChecksError.invalidRequest
         }
-        return try await modelLoader.load(request: request)
+        return try await modelLoader.load(request: request, decoder: decoder)
     }
 }

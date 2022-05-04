@@ -12,35 +12,39 @@ import XCTest
 
 class MockModelLoader: ModelLoading {
 
-    private var responseString = ""
+    private var stubData: ((URLRequest) -> String)?
 
-    func mockResponse(with responseString: String) {
-        self.responseString = responseString
+    func stub(_ stubData: @escaping ((URLRequest) -> String)) {
+        self.stubData = stubData
     }
 
-    func load<Model>(request: URLRequest) async throws -> Model where Model : Decodable {
-        return try responseString.decode(to: Model.self)
+    func load<Model>(request: URLRequest, decoder: Decoder) async throws -> Model where Model : Decodable {
+        let data = stubData?(request).data(using: .utf8) ?? Data()
+        return try decoder.decode(Model.self, from: data)
     }
 }
 
 final class GithubChecksTests: XCTestCase {
+    private lazy var decoder: Decoder = {
+        let decoder = JSONDecoder()
+        decoder.keyDecodingStrategy = .convertFromSnakeCase
+        return decoder
+    }()
 
     func testCreateChecksRequest() throws {
-        let ghChecks = GithubChecks(repository: "michaelhenry/ios", ghToken: "####AUTHTOKEN####", modelLoader: MockModelLoader())
+        let ghChecks = GithubChecks(repository: "michaelhenry/ios", ghToken: "####AUTHTOKEN####", modelLoader: MockModelLoader(), decoder: decoder)
         let request = ghChecks.createCheckRunRequest(payload: .init(name: "Code coverage", headSha: "XXXXXX"))
         XCTAssertEqual(request?.httpMethod, "POST")
         XCTAssertEqual(
-            try request?.httpBody?
-                .decode(to: CheckRunRequestPayload.self),
-            try "{\"name\":\"Code coverage\",\"head_sha\":\"XXXXXX\"}"
-                .decode(to: CheckRunRequestPayload.self))
+            try decoder.decode(CheckRunRequestPayload.self, from: request!.httpBody!),
+            try decoder.decode(CheckRunRequestPayload.self, from: "{\"name\":\"Code coverage\",\"head_sha\":\"XXXXXX\"}".data(using: .utf8)!))
         XCTAssertEqual(request?.allHTTPHeaderFields?["Accept"], "application/vnd.github.v3+json")
         XCTAssertEqual(request?.url?.absoluteString, "https://api.github.com/repos/michaelhenry/ios/check-runs")
         XCTAssertEqual(request?.allHTTPHeaderFields?["Authorization"], "Bearer ####AUTHTOKEN####")
     }
 
     func testUpdateChecksRequest() throws {
-        let ghChecks = GithubChecks(repository: "michaelhenry/ios", ghToken: "####AUTHTOKEN####", modelLoader: MockModelLoader())
+        let ghChecks = GithubChecks(repository: "michaelhenry/ios", ghToken: "####AUTHTOKEN####", modelLoader: MockModelLoader(), decoder: decoder)
         let request = ghChecks.updateCheckRunRequest(
             checkRunId: 1,
             payload: .init(
@@ -51,10 +55,8 @@ final class GithubChecksTests: XCTestCase {
                     summary: "Here is the summary of the report")))
         XCTAssertEqual(request?.httpMethod, "PATCH")
         XCTAssertEqual(
-            try request?.httpBody?
-                .decode(to: CheckRunRequestPayload.self),
-            try "{\"name\":\"Code coverage\",\"head_sha\":\"XXXXXX\",\"output\":{\"title\":\"Code coverage report\",\"summary\":\"Here is the summary of the report\"}}"
-                .decode(to: CheckRunRequestPayload.self))
+            try decoder.decode(CheckRunRequestPayload.self, from: request!.httpBody!),
+            try decoder.decode(CheckRunRequestPayload.self, from: "{\"name\":\"Code coverage\",\"head_sha\":\"XXXXXX\",\"output\":{\"title\":\"Code coverage report\",\"summary\":\"Here is the summary of the report\"}}".data(using: .utf8)!))
         XCTAssertEqual(request?.allHTTPHeaderFields?["Accept"], "application/vnd.github.v3+json")
         XCTAssertEqual(request?.url?.absoluteString, "https://api.github.com/repos/michaelhenry/ios/check-runs/1")
         XCTAssertEqual(request?.allHTTPHeaderFields?["Authorization"], "Bearer ####AUTHTOKEN####")
@@ -62,9 +64,9 @@ final class GithubChecksTests: XCTestCase {
 
     func testCreateCheckRun() async throws {
         let modelLoader = MockModelLoader()
-        let ghChecks = GithubChecks(repository: "michaelhenry/ios", ghToken: "####AUTHTOKEN####", modelLoader: modelLoader)
+        let ghChecks = GithubChecks(repository: "michaelhenry/ios", ghToken: "####AUTHTOKEN####", modelLoader: modelLoader, decoder: decoder)
         let payload = CheckRunRequestPayload(name: "Code coverage", headSha: "ce587453ced02b1526dfb4cb910479d431683101")
-        modelLoader.mockResponse(with: successResponse)
+        modelLoader.stub { [successResponse] _ in successResponse }
         let response = try await ghChecks.createCheckRun(payload: payload)
         XCTAssertEqual(response.id, 4)
         XCTAssertEqual(response.headSha, "ce587453ced02b1526dfb4cb910479d431683101")
@@ -74,25 +76,11 @@ final class GithubChecksTests: XCTestCase {
 
     func testUpdateCheckRun() async throws {
         let modelLoader = MockModelLoader()
-        let ghChecks = GithubChecks(repository: "michaelhenry/ios", ghToken: "####AUTHTOKEN####", modelLoader: modelLoader)
+        let ghChecks = GithubChecks(repository: "michaelhenry/ios", ghToken: "####AUTHTOKEN####", modelLoader: modelLoader, decoder: decoder)
         let payload = CheckRunRequestPayload(name: "Code coverage", headSha: "ce587453ced02b1526dfb4cb910479d431683101")
-        modelLoader.mockResponse(with: successResponse)
+        modelLoader.stub { [successResponse] _ in successResponse }
         let response = try await ghChecks.updateCheckRun(checkRunId: 4, payload: payload)
         XCTAssertEqual(response.id, 4)
-    }
-}
-
-extension String {
-    func decode<Model>(to: Model.Type) throws -> Model where Model: Decodable {
-        return try data(using: .utf8)!.decode(to: to)
-    }
-}
-
-extension Data {
-    func decode<Model>(to: Model.Type) throws -> Model where Model: Decodable {
-        let decoder = JSONDecoder()
-        decoder.keyDecodingStrategy = .convertFromSnakeCase
-        return try decoder.decode(Model.self, from: self)
     }
 }
 

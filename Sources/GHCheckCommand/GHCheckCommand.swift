@@ -79,7 +79,10 @@ struct GHCheckCommand: AsyncParsableCommand {
             output: .init(title: title, summary: summary)
         )
         let session = URLSession(configuration: .default)
-        let ghChecks = GithubChecks(repository: repository, ghToken: githubToken, modelLoader: session)
+        let decoder = JSONDecoder()
+        decoder.keyDecodingStrategy = .convertFromSnakeCase
+
+        let ghChecks = GithubChecks(repository: repository, ghToken: githubToken, modelLoader: session, decoder: decoder)
         let response = try await ghChecks.createCheckRun(payload: payload)
         print("RESPONSE IS", response)
         GHCheckCommand.exit(withError: nil)

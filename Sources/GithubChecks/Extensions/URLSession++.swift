@@ -7,7 +7,7 @@ import Foundation
 #endif
 
 extension URLSession: ModelLoading {
-    public func load<Model>(request: URLRequest) async throws -> Model where Model: Decodable {
+    public func load<Model>(request: URLRequest, decoder: Decoder) async throws -> Model where Model: Decodable {
         #if canImport(FoundationNetworking)
             let responseData: Data = await withCheckedContinuation { continuation in
                 dataTask(with: request) { data, _, _ in
@@ -23,8 +23,6 @@ extension URLSession: ModelLoading {
             }
         #endif
 
-        let decoder = JSONDecoder()
-        decoder.keyDecodingStrategy = .convertFromSnakeCase
         if let model = try? decoder.decode(Model.self, from: responseData) {
             return model
         } else {

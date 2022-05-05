@@ -20,7 +20,11 @@ let package = Package(
         .package(url: "https://github.com/michaelhenry/SimpleXMLParser", from: "1.0.0"),
     ],
     targets: [
-        .target(name: "GithubChecks"),
+        .target(
+            name: "GithubChecks",
+            dependencies: [
+                .product(name: "ArgumentParser", package: "swift-argument-parser"),
+            ]),
         .target(name: "Reports", dependencies: [
             .product(name: "SimpleXMLParser", package: "SimpleXMLParser"),
         ]),
@@ -29,14 +33,12 @@ let package = Package(
             dependencies: [
                 "GithubChecks",
                 "Reports",
-                .product(name: "ArgumentParser", package: "swift-argument-parser"),
             ]
         ),
         .testTarget(
             name: "GithubChecksTests",
             dependencies: [
                 "GithubChecks",
-                .product(name: "ArgumentParser", package: "swift-argument-parser"),
             ]
         ),
         .testTarget(

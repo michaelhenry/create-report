@@ -1,21 +1,20 @@
 import ArgumentParser
 import Foundation
-import GithubChecks
 import Reports
 #if canImport(FoundationNetworking)
-    import FoundationNetworking
+import FoundationNetworking
 #endif
 #if canImport(_Concurrency)
-    import _Concurrency
+import _Concurrency
 #endif
 
-enum GHCheckCommandError: Error {
+public enum GHCheckCommandError: Error {
     case unsupportedCommand
     case missingGithubToken
     case other(Error)
 }
 
-enum SummaryDataFormat: String, Codable, CaseIterable {
+public enum SummaryDataFormat: String, Codable, CaseIterable {
     case markdown
     case html
     case junit
@@ -32,30 +31,31 @@ enum SummaryDataFormat: String, Codable, CaseIterable {
     }
 }
 
-@main
-struct GHCheckCommand: AsyncParsableCommand {
+public struct GHCheckCommand: AsyncParsableCommand {
     @Option(help: "The title of the report")
-    var title: String
+    public var title: String
 
     @Option(help: "The data format of the summary. Options are \(SummaryDataFormat.allCases.map { $0.rawValue }). The default value is 'markdown'")
-    var format: String = SummaryDataFormat.markdown.rawValue
+    public var format: String = SummaryDataFormat.markdown.rawValue
 
     @Option(help: "The path of the summary report")
-    var path: String
+    public var path: String
 
     @Option(help: "Eg. apple/swift")
-    var repository: String
+    public var repository: String
 
     @Option(help: "HEAD SHA, eg. ${{ github.event.pull_request.head.sha }}")
-    var headSha: String
+    public var headSha: String
 
     @Option(help: "Your github token. eg. ${{ secrets.GITHUB_TOKEN }}")
-    var githubToken: String
+    public var githubToken: String
 
     @Argument(help: "Command eg. create-report")
-    var command: String
+    public var command: String
 
-    func run() async throws {
+    public init() {}
+
+    public func run() async throws {
         switch command {
         case "create-report":
             try await createReport()

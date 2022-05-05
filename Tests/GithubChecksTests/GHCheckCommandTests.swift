@@ -11,7 +11,7 @@ import XCTest
 #if canImport(_Concurrency)
 import _Concurrency
 #endif
-@testable import GHCheckCommand
+import GithubChecks
 
 class GHCheckCommandTests: XCTestCase {
 

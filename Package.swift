@@ -34,7 +34,10 @@ let package = Package(
         ),
         .testTarget(
             name: "GithubChecksTests",
-            dependencies: ["GithubChecks"]
+            dependencies: [
+                "GithubChecks",
+                .product(name: "ArgumentParser", package: "swift-argument-parser"),
+            ]
         ),
         .testTarget(
             name: "SummaryRendererTests",

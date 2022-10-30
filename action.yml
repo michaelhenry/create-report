@@ -26,7 +26,7 @@ runs:
       uses: actions/cache@v3
       with:
         path: ~/.cache/pip
-        key: ${{ runner.os }}-hashFiles("$GITHUB_ACTION_PATH/requirements.txt")-v1
+        key: ${{ runner.os }}-${{ env.GITHUB_ACTION_PATH }}-pip-cache
 
     - uses: fwal/setup-swift@v1.14.0
       with:
@@ -37,7 +37,7 @@ runs:
         python-version: '3.8.12'
         cache: 'pip'
 
-    - run: pip install -r $GITHUB_ACTION_PATH/requirements.txt
+    - run: pip install -r ${{ env.GITHUB_ACTION_PATH }}/requirements.txt
       if: steps.pip-cache.outputs.cache-hit != 'true'
       shell: bash
 
@@ -46,7 +46,7 @@ runs:
       uses: actions/cache@v3
       with:
         path: /usr/local/bin/ghchecks
-        key: ${{ runner.os }}-${{ env.GITHUB_ACTION_PATH }}
+        key: ${{ runner.os }}-${{ env.GITHUB_ACTION_PATH }}-ghchecks-cache
 
     - if: steps.ghchecks-cache.outputs.cache-hit != 'true'
       run: |

@@ -50,6 +50,7 @@ runs:
 
     - if: steps.ghchecks-cache.outputs.cache-hit != 'true'
       run: |
+        cd $GITHUB_ACTION_PATH
         swift build -c release && \
         cp .build/release/ghchecks /usr/local/bin/ghchecks
       shell: bash

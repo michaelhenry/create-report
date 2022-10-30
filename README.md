@@ -24,7 +24,7 @@ jobs:
 ## Using Markdown
 
 ```yml
-  - uses: michaelhenry/create-report@v2.0.0
+  - uses: michaelhenry/create-report@v2
     name: create report from markdown
     with:
       title: "Markdown report"
@@ -41,7 +41,7 @@ Please see [samples/sample.md](samples/sample.md) for the sample file which gene
 ## Using HTML
 
 ```yml
-  - uses: michaelhenry/create-report@v2.0.0
+  - uses: michaelhenry/create-report@v2
     name: create report from html
     with:
       title: "HTML report"
@@ -58,7 +58,7 @@ Please see [samples/sample.html](samples/sample.html) for the sample file which 
 ## Using JUnit
 
 ```yml
-  - uses: michaelhenry/create-report@v2.0.0
+  - uses: michaelhenry/create-report@v2
     name: create report from junit
     with:
       title: "JUnit report"

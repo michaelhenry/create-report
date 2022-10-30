@@ -23,10 +23,10 @@ runs:
   steps:
     - name: Cache Pip
       id: pip-cache
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: ~/.cache/pip
-        key: ${{ runner.os }}-hashFiles("**/requirements.txt")-v1
+        key: ${{ runner.os }}-${{ env.GITHUB_ACTION_PATH }}-pip-cache
 
     - uses: fwal/setup-swift@v1.14.0
       with:
@@ -37,13 +37,27 @@ runs:
         python-version: '3.8.12'
         cache: 'pip'
 
-    - run: pip install -r requirements.txt
+    - run: pip install -r $GITHUB_ACTION_PATH/requirements.txt
       if: steps.pip-cache.outputs.cache-hit != 'true'
+      shell: bash
+
+    - name: Cache ghchecks
+      id: ghchecks-cache
+      uses: actions/cache@v3
+      with:
+        path: /usr/local/bin/ghchecks
+        key: ${{ runner.os }}-${{ env.GITHUB_ACTION_PATH }}-ghchecks-cache
+
+    - if: steps.ghchecks-cache.outputs.cache-hit != 'true'
+      run: |
+        cd $GITHUB_ACTION_PATH
+        swift build -c release && \
+        cp .build/release/ghchecks /usr/local/bin/ghchecks
       shell: bash
 
     - name: Create report
       run: |
-        swift run ghchecks create-report \
+        ghchecks create-report \
         --title "${{ inputs.title }} " \
         --path "${{ inputs.path }}" \
         --format "${{ inputs.format }}" \

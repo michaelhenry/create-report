@@ -41,9 +41,14 @@ runs:
       if: steps.pip-cache.outputs.cache-hit != 'true'
       shell: bash
 
+    - run: |
+        swift build -c release && \
+        cp .build/release/ghchecks /usr/local/bin/ghchecks
+      shell: bash
+
     - name: Create report
       run: |
-        swift run ghchecks create-report \
+        ghchecks create-report \
         --title "${{ inputs.title }} " \
         --path "${{ inputs.path }}" \
         --format "${{ inputs.format }}" \

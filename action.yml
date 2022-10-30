@@ -23,7 +23,7 @@ runs:
   steps:
     - name: Cache Pip
       id: pip-cache
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: ~/.cache/pip
         key: ${{ runner.os }}-hashFiles("$GITHUB_ACTION_PATH/requirements.txt")-v1
@@ -41,7 +41,15 @@ runs:
       if: steps.pip-cache.outputs.cache-hit != 'true'
       shell: bash
 
-    - run: |
+    - name: Cache ghchecks
+      id: ghchecks-cache
+      uses: actions/cache@v3
+      with:
+        path: /usr/local/bin/ghchecks
+        key: ${{ runner.os }}-ghchecks-v1
+
+    - if: steps.ghchecks-cache.outputs.cache-hit != 'true'
+      run: |
         swift build -c release && \
         cp .build/release/ghchecks /usr/local/bin/ghchecks
       shell: bash

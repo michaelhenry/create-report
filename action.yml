@@ -26,7 +26,7 @@ runs:
       uses: actions/cache@v2
       with:
         path: ~/.cache/pip
-        key: ${{ runner.os }}-hashFiles("**/requirements.txt")-v1
+        key: ${{ runner.os }}-hashFiles("$GITHUB_ACTION_PATH/requirements.txt")-v1
 
     - uses: fwal/setup-swift@v1.14.0
       with:

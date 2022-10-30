@@ -46,7 +46,7 @@ runs:
       uses: actions/cache@v3
       with:
         path: /usr/local/bin/ghchecks
-        key: ${{ runner.os }}-ghchecks-v1
+        key: ${{ runner.os }}-${{ env.GITHUB_ACTION_PATH }}
 
     - if: steps.ghchecks-cache.outputs.cache-hit != 'true'
       run: |

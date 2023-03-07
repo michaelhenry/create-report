@@ -56,7 +56,7 @@ jobs:
           is-spm: true
           output: "coverage/lcov.info"
           output-artifact-name: "codeclimate-artifact"
-          ignore-filename-regex: "GHCheckCommand.swift|URLSession++.swift"
+          ignore-filename-regex: "GHCheckCommand.swift|URLSession++.swift|Tests|.build"
       - name: Publish code coverage
         uses: paambaati/codeclimate-action@v3.0.0
         env:

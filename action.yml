@@ -28,9 +28,9 @@ runs:
         path: ~/.cache/pip
         key: ${{ runner.os }}-${{ env.GITHUB_ACTION_PATH }}-pip-cache
 
-    - uses: fwal/setup-swift@v1.14.0
+    - uses: fwal/setup-swift@v1.22.0
       with:
-        swift-version: "5.6"
+        swift-version: "5.7"
 
     - uses: actions/setup-python@v2
       with:

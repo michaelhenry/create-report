@@ -31,7 +31,7 @@ jobs:
           is-spm: true
           output: "coverage/lcov.info"
           output-artifact-name: "codecov-artifact"
-          ignore-filename-regex: ".build|Tests|Pods|Carthage|DerivedData|GHCheckCommand.swift|URLSession++.swift"
+          ignore-filename-regex: ".build|Tests|Pods|Carthage|DerivedData|GHCheckCommand|URLSession"
       - name: Upload to Codecov
         run: |
           bash <(curl https://codecov.io/bash) -f "coverage/*.info"
@@ -57,7 +57,7 @@ jobs:
           is-spm: true
           output: "coverage/lcov.info"
           output-artifact-name: "codeclimate-artifact"
-          ignore-filename-regex: ".build|Tests|Pods|Carthage|DerivedData|GHCheckCommand.swift|URLSession++.swift"
+          ignore-filename-regex: ".build|Tests|Pods|Carthage|DerivedData|GHCheckCommand|URLSession"
       - name: Publish code coverage
         uses: paambaati/codeclimate-action@v3.0.0
         env:
